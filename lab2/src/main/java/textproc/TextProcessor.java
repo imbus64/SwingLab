@@ -1,4 +1,3 @@
-package textproc;
 
 /**
  * Beskriver metoder för att behandla en sekvens av ord (som en bok), och därefter
