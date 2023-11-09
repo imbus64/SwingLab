@@ -84,7 +84,6 @@ public class BookReaderController {
         sortAlphabeticallyButton.addActionListener(e -> sort.accept(SortOrder.ALPHA));
         sortByFrequencyButton.addActionListener(e -> sort.accept(SortOrder.FREQ));
 
-
         // Add components to the button panel
         buttonPanel.add(sortAlphabeticallyButton);
         buttonPanel.add(sortByFrequencyButton);
