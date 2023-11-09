@@ -32,5 +32,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass.set("textproc.MainClass")
+    mainClass.set("textproc.BookReaderApplication")
 }

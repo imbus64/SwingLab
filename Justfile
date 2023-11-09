@@ -1,5 +1,5 @@
 dev:
-    watchexec -c -w . ./gradlew run
+    watchexec -c -r -w . ./gradlew run
 
 devtest:
-    watchexec -c -w . ./gradlew test
+    watchexec -c -r -w . ./gradlew test

@@ -4,4 +4,4 @@ plugins {
 }
 
 rootProject.name = "swing_demo"
-include("app", "lab2", "lab3")
+include("lab2", "lab3")
