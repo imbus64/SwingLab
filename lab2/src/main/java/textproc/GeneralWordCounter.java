@@ -1,17 +1,14 @@
 package textproc;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class GeneralWordCounter implements TextProcessor{
-	private Map<String, Integer> map = new HashMap<String, Integer>();
+	private Map<String, Integer> map = new TreeMap<String, Integer>();
 	// En collection utan duplikanter
 	private Set<String> nonCountedWords;
 	
@@ -29,11 +26,6 @@ public class GeneralWordCounter implements TextProcessor{
 	}
 	
 	public void report() {
-//		for(String name : map.keySet()) {
-//			if(map.get(name) >= 200) {
-//				System.out.println(name + ": " + map.get(name));
-//			}
-//		}
 	       Set<Map.Entry<String, Integer>> wordSet = map.entrySet();
 	        List<Map.Entry<String, Integer>> wordList = new ArrayList<>(wordSet);
 
