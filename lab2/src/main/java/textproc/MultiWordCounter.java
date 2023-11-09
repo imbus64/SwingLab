@@ -2,12 +2,11 @@ package textproc;
 
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.HashMap;
 
 // Läser av flera ord
 public class MultiWordCounter implements TextProcessor{
 	// En Map är en lista av value-pairs
-	private Map<String, Integer> map = new HashMap<String, Integer>();
+	private Map<String, Integer> map = new TreeMap<String, Integer>();
 	
 	// Tar in en String-array, sätter varje ord och ett startnummer (nbr) = 0
 	public MultiWordCounter(String [] a) {
