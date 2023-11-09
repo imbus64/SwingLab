@@ -31,14 +31,4 @@ public class GeneralWordCounter {
 
         return wordCountMap;
     }
-
-    // public static void main(String[] args) {
-    //     String filePath = "sample.txt"; // Replace with the path to your text file
-    //     Map<String, Integer> wordCountMap = countWordsFromFile(filePath);
-
-    //     // Print the word frequencies
-    //     for (Map.Entry<String, Integer> entry : wordCountMap.entrySet()) {
-    //         System.out.println(entry.getKey() + ": " + entry.getValue());
-    //     }
-    // }
 }

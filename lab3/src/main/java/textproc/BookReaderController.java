@@ -9,10 +9,15 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 public class BookReaderController {
     public BookReaderController(GeneralWordCounter counter) {
         SwingUtilities.invokeLater(() -> createWindow(counter, "EnRiktigBoi", 100, 300));
+    }
+
+    private static enum SortOrder {
+        ALPHA, FREQ
     }
 
     private void createWindow(GeneralWordCounter counter, String title, int width, int height) {
@@ -50,21 +55,6 @@ public class BookReaderController {
         // Create a search box (JTextField)
         JTextField searchField = new JTextField(20);
 
-        // Add action listeners to the sorting buttons
-        sortAlphabeticallyButton.addActionListener(e -> {
-            List<String> sortedWords = wordCountMap.keySet().stream()
-                    .sorted(String::compareTo)
-                    .collect(Collectors.toList());
-            updateWordListModel(wordListModel, wordCountMap, sortedWords);
-        });
-
-        sortByFrequencyButton.addActionListener(e -> {
-            List<String> sortedWords = wordCountMap.keySet().stream()
-                    .sorted(Comparator.comparingInt(wordCountMap::get).reversed())
-                    .collect(Collectors.toList());
-            updateWordListModel(wordListModel, wordCountMap, sortedWords);
-        });
-
         // Lambdas are stored in variables of the following types:
         // Use Supplier if it takes nothing, but returns something.
         // Use Consumer if it takes something, but returns nothing.
@@ -78,9 +68,22 @@ public class BookReaderController {
             updateWordListModel(wordListModel, wordCountMap, filteredWords);
         };
 
-        // Add lambdas to the search button to filter the list
+        Consumer<SortOrder> sort = (sortOrder) -> {
+            List<String> sortedWords = wordCountMap.keySet().stream()
+                    .sorted((a, b) -> {
+                        if (sortOrder == SortOrder.ALPHA) return a.compareTo(b);
+                        else return wordCountMap.get(b) - wordCountMap.get(a);
+                    })
+                    .collect(Collectors.toList());
+            updateWordListModel(wordListModel, wordCountMap, sortedWords);
+        };
+
+        // Add lambdas (handlers, "action listeners") to the search button to filter the list
         searchButton.addActionListener(e -> searchFilter.run());
         searchField.addActionListener(e -> searchFilter.run());
+        sortAlphabeticallyButton.addActionListener(e -> sort.accept(SortOrder.ALPHA));
+        sortByFrequencyButton.addActionListener(e -> sort.accept(SortOrder.FREQ));
+
 
         // Add components to the button panel
         buttonPanel.add(sortAlphabeticallyButton);
