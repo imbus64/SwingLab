@@ -22,8 +22,14 @@ public class BookReaderController {
 
     private void createWindow(GeneralWordCounter counter, String title, int width, int height) {
         ImageIcon icon = new ImageIcon("icon.png");
-        // Create a map of words and their counts
-        Map<String, Integer> wordCountMap = getWords();
+
+        // Equivalent to the more functional approach below
+        // counter.getWordList().removeIf(entry -> Character.isDigit(entry.getKey().charAt(0)));
+
+        // Bending over backwards to get this monstrosity running
+        Map<String, Integer> wordCountMap = counter.getWordList().stream()
+                .filter(entry -> !Character.isDigit(entry.getKey().charAt(0))) // Substitutes removeIf
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // Create a JFrame (a window)
         JFrame frame = new JFrame("EnRiktigBoi");
@@ -48,8 +54,15 @@ public class BookReaderController {
         JPanel buttonPanel = new JPanel();
 
         // Create buttons for sorting
-        JButton sortAlphabeticallyButton = new JButton("Sort Alphabetically");
-        JButton sortByFrequencyButton = new JButton("Sort by Frequency");
+        // JButton sortAlphabeticallyButton = new JButton("Sort Alphabetically");
+        // JButton sortByFrequencyButton = new JButton("Sort by Frequency");
+        JRadioButton sortAlphabeticallyRadioButton = new JRadioButton("Sort Alphabetically");
+        JRadioButton sortByFrequencyRadioButton = new JRadioButton("Sort by Frequency");
+        ButtonGroup sortButtonGroup = new ButtonGroup();
+        sortButtonGroup.add(sortAlphabeticallyRadioButton);
+        sortButtonGroup.add(sortByFrequencyRadioButton);
+        sortAlphabeticallyRadioButton.setSelected(true);
+
         JButton searchButton = new JButton("Search");
 
         // Create a search box (JTextField)
@@ -58,35 +71,47 @@ public class BookReaderController {
         // Lambdas are stored in variables of the following types:
         // Use Supplier if it takes nothing, but returns something.
         // Use Consumer if it takes something, but returns nothing.
-        // Use Callable if it returns a result and might throw (most akin to Thunk in general CS terms).
+        // Use Callable if it returns a result and might throw (most akin to Thunk in
+        // general CS terms).
         // Use Runnable if it does neither and cannot throw
         Runnable searchFilter = () -> {
-            String searchTerm = searchField.getText().toLowerCase();
+            String searchTerm = searchField.getText().toLowerCase().trim();
             List<String> filteredWords = wordCountMap.keySet().stream()
                     .filter(word -> word.toLowerCase().contains(searchTerm))
                     .collect(Collectors.toList());
+
             updateWordListModel(wordListModel, wordCountMap, filteredWords);
+            Integer index = filteredWords.indexOf(searchTerm);
+            if (index != -1)
+                wordList.setSelectedIndex(index);
         };
 
         Consumer<SortOrder> sort = (sortOrder) -> {
             List<String> sortedWords = wordCountMap.keySet().stream()
                     .sorted((a, b) -> {
-                        if (sortOrder == SortOrder.ALPHA) return a.compareTo(b);
-                        else return wordCountMap.get(b) - wordCountMap.get(a);
+                        if (sortOrder == SortOrder.ALPHA)
+                            return a.compareTo(b);
+                        else
+                            return wordCountMap.get(b) - wordCountMap.get(a);
                     })
                     .collect(Collectors.toList());
             updateWordListModel(wordListModel, wordCountMap, sortedWords);
         };
 
-        // Add lambdas (handlers, "action listeners") to the search button to filter the list
+        // Add lambdas (handlers, "action listeners") to the search button to filter the
+        // list
         searchButton.addActionListener(e -> searchFilter.run());
         searchField.addActionListener(e -> searchFilter.run());
-        sortAlphabeticallyButton.addActionListener(e -> sort.accept(SortOrder.ALPHA));
-        sortByFrequencyButton.addActionListener(e -> sort.accept(SortOrder.FREQ));
+        // sortAlphabeticallyButton.addActionListener(e -> sort.accept(SortOrder.ALPHA));
+        // sortByFrequencyButton.addActionListener(e -> sort.accept(SortOrder.FREQ));
+        sortAlphabeticallyRadioButton.addActionListener(e -> sort.accept(SortOrder.ALPHA));
+        sortByFrequencyRadioButton.addActionListener(e -> sort.accept(SortOrder.FREQ));
 
         // Add components to the button panel
-        buttonPanel.add(sortAlphabeticallyButton);
-        buttonPanel.add(sortByFrequencyButton);
+        // buttonPanel.add(sortAlphabeticallyButton);
+        // buttonPanel.add(sortByFrequencyButton);
+        buttonPanel.add(sortAlphabeticallyRadioButton);
+        buttonPanel.add(sortByFrequencyRadioButton);
         buttonPanel.add(searchField);
         buttonPanel.add(searchButton);
 

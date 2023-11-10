@@ -1,34 +1,32 @@
 package textproc;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.List;
+import java.util.Set;
 
-public class GeneralWordCounter {
-    public static Map<String, Integer> countWordsFromFile(String filePath) {
-        Map<String, Integer> wordCountMap = new HashMap<>();
+public class GeneralWordCounter implements TextProcessor {
+    private Set<String> nonCountedWords = null;
+    private Map<String, Integer> map = new TreeMap<String, Integer>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] words = line.split("\\s+"); // Split the line into words (whitespace as delimiter)
+    GeneralWordCounter(Set<String> nonCountedWords) {
+        this.nonCountedWords = nonCountedWords;
+    }
 
-                for (String word : words) {
-                    // Remove punctuation and convert to lowercase for better word matching
-                    word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
+    public List<Map.Entry<String, Integer>> getWordList() {
+        return List.copyOf(map.entrySet());
+    }
 
-                    if (!word.isEmpty()) {
-                        // Update word frequency in the map
-                        wordCountMap.put(word, wordCountMap.getOrDefault(word, 0) + 1);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void process(String word) {
+        if (!nonCountedWords.contains(word))
+            map.put(word, map.getOrDefault(word, 0) + 1);
+    }
+
+    @Override
+    public void report() {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-
-        return wordCountMap;
     }
 }
